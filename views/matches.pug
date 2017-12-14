@@ -1,0 +1,54 @@
+extends layout
+
+
+block content
+
+	
+
+	h1 stats
+
+	each s in seasons.seasons
+		if s == season
+			span #{s} 
+		else
+			a(href="/matches/" + club + "/" + s) #{s} 
+
+
+	div(id="overview")
+		span win #{stats.win} - 
+		span lose #{stats.lose} - 
+		span draw #{stats.draw}
+
+	div(id="charts")
+		div(class="chart")
+			p(text-align: center) ALL GAMES 
+			svg(width="200" height="200" id="allGames")
+
+		div(class="chart")
+			p(text-align: center, id="allGoalsTitle") ALL GOALS
+			svg(width="200" height="200"  id="allGoals")
+
+	if stats
+		div(id="accordion" role="tablist")
+			- var i = 0;
+			- function getNumber(i){ return converter.toWords(i).charAt(0).toUpperCase() + converter.toWords(i).slice(1);}			
+			each m, c in stats.matches	
+					div(class="card")
+						div(class="card-header" role="tab" id="heading" + getNumber(i))
+							h5(class="mb-0")
+								a(class="collapsed" data-toggle="collapse" href="#collapse" + getNumber(i) aria-expanded="false" aria-controls="collapse" + getNumber(i))= "vs " + c + " " + stats.matches[c].aggGoalsFor + "-" + stats.matches[c].aggGoalsAgainst
+
+						div(id="collapse" + getNumber(i) class="collapse" role="tabpanel" aria-labelledby="heading" + getNumber(i) data-parent="#accordion")
+							div(class="card-body") 
+								each match in stats.matches[c].matches
+									p= match.team1.key + " vs " + match.team2.key + " " + match.score1 + "-" + match.score2 + " | " + match.name + " | " + match.date
+						- i++;
+					
+	head
+		script(src="https://d3js.org/d3.v4.min.js")
+		link(rel='stylesheet', href='https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css')
+		script(src="https://code.jquery.com/jquery-3.2.1.slim.min.js")
+		script(src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js")
+		script(src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js")
+		link(rel='stylesheet', href='/stylesheets/style.css')
+		script(src="/javascripts/script.js")
